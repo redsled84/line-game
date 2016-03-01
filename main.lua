@@ -1,3 +1,4 @@
+-- Work on trying to create physic bodies from lines
 local inspect = require 'inspect'
 local Lines = { currLine={}, lines={} }
 
