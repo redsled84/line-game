@@ -30,7 +30,6 @@ function love.keypressed(key)
 	if key == "r" then
 		Lines.lines = {}
 		Physics:removeBodies()
-		print(inspect(Physics.bodies))
 	end
 end
 
