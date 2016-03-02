@@ -60,6 +60,7 @@ function Lines:drawLines()
 	end
 	if #self.lines ~= 0 then
 		for _,v in ipairs(self.lines) do
+			love.graphics.setColor(255,0,0)
 			love.graphics.line(v.s.x, v.s.y, v.e.x, v.e.y)
 		end
 	end

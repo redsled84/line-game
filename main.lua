@@ -1,7 +1,7 @@
--- TODO: fix small color bug between ball and polygons
+-- FIXED: fix small color bug between ball and polygons
 -- TODO: polygon shape is updated via currLine
 -- TODO: create tracers
--- TODO: fix single click bug
+-- FIXED: fix single click bug
 -- TODO: add hoops, complete level when ball goes in hoop
 -- TODO: random spawn of ball, random spawn of hoop, on click event start game
 local inspect = require 'inspect'
@@ -23,12 +23,14 @@ end
 
 function love.draw()
 	Lines:drawLines()
-	Physics:drawPhysicBodies()
+	Physics:drawPhysicBodies(world)
 end
 
 function love.keypressed(key)
-	if key == "space" then
-		Physics:createCircle(world, 10, 10, 10, .92)
+	if key == "r" then
+		Lines.lines = {}
+		Physics:removeBodies()
+		print(inspect(Physics.bodies))
 	end
 end
 
@@ -41,7 +43,13 @@ end
 function love.mousereleased(x, y, button, istouch)
 	if button == 1 then
 		local line = Lines:assignEndPoint(x, y)
-		-- fix single click bug by checking if the end points are nil
-		Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 2)
+		-- fix single click bug by checking if the end points equal start points
+		if line.e.x == line.s.x and line.e.y == line.s.y then
+			print("Can't create polygon with single point!")
+		else 
+			Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 2)
+		end
+	elseif button == 2 then
+		Physics:createCircle(world, x, y, 5, 1)
 	end
 end
