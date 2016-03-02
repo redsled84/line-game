@@ -1,49 +1,35 @@
--- Work on trying to create physic bodies from lines
+-- TODO: fix small color bug between ball and polygons
+-- TODO: polygon shape is updated via currLine
+-- TODO: create tracers
+-- TODO: fix single click bug
+-- TODO: add hoops, complete level when ball goes in hoop
+-- TODO: random spawn of ball, random spawn of hoop, on click event start game
 local inspect = require 'inspect'
-local Lines = { currLine={}, lines={} }
+local Lines = require 'lines'
+local Physics = require 'physics'
 
-function Lines:createNewLine(x, y)
-	local currLine = { s={x=x, y=y}, e={x=0, y=0} }
-	setmetatable(self.currLine, {__index=currLine})
-end
-
-function Lines:assignEndPoint(x, y)
-	local mt = getmetatable(self.currLine)
-	mt.__index.e.x = x; mt.__index.e.y = y;
-	table.insert(self.lines, mt.__index)
-	self.currLine = {}
-end
-
-function Lines:updateEndPoint()
-	local mt = getmetatable(Lines.currLine)
-	if mt ~= nil then
-		mt.__index.e.x = love.mouse.getX(); mt.__index.e.y = love.mouse.getY()
-	end
-end
-
-function Lines:drawLines()
-	local currLine_mt = getmetatable(self.currLine)
-	if currLine_mt ~= nil then
-		local mt = currLine_mt
-		love.graphics.line(mt.__index.s.x, mt.__index.s.y, mt.__index.e.x, mt.__index.e.y)
-	end
-	if #self.lines ~= 0 then
-		for _,v in ipairs(self.lines) do
-			love.graphics.line(v.s.x, v.s.y, v.e.x, v.e.y)
-		end
-	end
-end
+local meter = 64; love.physics.setMeter(meter)
+local world = love.physics.newWorld(0, 9.18*meter, true)
 
 function love.load()
-
+	Lines:initialize()
+	Physics:initialize()
 end
 
 function love.update(dt)
 	Lines:updateEndPoint()
+	Physics:updateWorld(dt, world)
 end
 
 function love.draw()
 	Lines:drawLines()
+	Physics:drawPhysicBodies()
+end
+
+function love.keypressed(key)
+	if key == "space" then
+		Physics:createCircle(world, 10, 10, 10, .92)
+	end
 end
 
 function love.mousepressed(x, y, button, istouch)
@@ -54,6 +40,8 @@ end
 
 function love.mousereleased(x, y, button, istouch)
 	if button == 1 then
-		Lines:assignEndPoint(x, y)
+		local line = Lines:assignEndPoint(x, y)
+		-- fix single click bug by checking if the end points are nil
+		Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 2)
 	end
 end
