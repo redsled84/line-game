@@ -13,7 +13,6 @@ function Physics:createLinePolygon(world, sx, sy, ex, ey, size)
 			sx+size, sy+size, ex+size, ey+size})
 	}
 	polygon.fixture = love.physics.newFixture(polygon.body, polygon.shape, 1)
-	print(inspect(polygon.body))
 	table.insert(self.bodies, polygon)
 end
 
@@ -27,18 +26,30 @@ function Physics:createCircle(world, x, y, radius, bounciness)
 	table.insert(self.bodies, circle)
 end
 
-function Physics:updateWorld(dt, world)
-	world:update(dt)
+function Physics:removeBodies()
+	for i=#self.bodies,1,-1 do
+		local v = self.bodies[i]
+		v.body:destroy()
+		table.remove(self.bodies, i)
+	end
 end
 
-function Physics:drawPhysicBodies()
-	for _,v in ipairs(self.bodies) do
-		if v.shape:getType() == 'circle' then
-			love.graphics.setColor(0,255,0)
-			love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
-		else
-			love.graphics.setColor(255,0,0)
-			love.graphics.polygon("fill", v.body:getWorldPoints(v.shape:getPoints()))
+function Physics:updateWorld(dt, world)
+	if not world:isDestroyed() then
+		world:update(dt)
+	end
+end
+
+function Physics:drawPhysicBodies(world)
+	if not world:isDestroyed() then
+		for _,v in ipairs(self.bodies) do
+			if v.shape:getType() == 'circle' then
+				love.graphics.setColor(0,255,0)
+				love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
+			else
+				love.graphics.setColor(255,0,0)
+				love.graphics.polygon("fill", v.body:getWorldPoints(v.shape:getPoints()))
+			end
 		end
 	end
 end
