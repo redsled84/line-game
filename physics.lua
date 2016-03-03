@@ -26,6 +26,16 @@ function Physics:createCircle(world, x, y, radius, bounciness)
 	table.insert(self.bodies, circle)
 end
 
+function Physics:createRectangle(world, x, y, w, h)
+	local rect = {
+		body = love.physics.newBody(world, 0, 0, "dynamic"),
+		shape = love.physics.newRectangleShape(x, y, w, h),
+		type = "rectangle"
+	}
+	rect.fixture = love.physics.newFixture(rect.body, rect.shape, w, h, 1.25):setRestitution(.5)
+	table.insert(self.bodies, rect)
+end
+
 function Physics:removeBodies()
 	for i=#self.bodies,1,-1 do
 		local v = self.bodies[i]
@@ -45,7 +55,10 @@ function Physics:drawPhysicBodies(world)
 		for _,v in ipairs(self.bodies) do
 			if v.shape:getType() == 'circle' then
 				love.graphics.setColor(0,255,0)
-				love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
+				love.graphics.circle("line", v.body:getX(), v.body:getY(), v.shape:getRadius())
+			elseif v.type == "rectangle" then
+				love.graphics.setColor(0,0,255)
+				love.graphics.polygon("line", v.body:getWorldPoints(v.shape:getPoints()))
 			else
 				love.graphics.setColor(255,0,0)
 				love.graphics.polygon("fill", v.body:getWorldPoints(v.shape:getPoints()))

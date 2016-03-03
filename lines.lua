@@ -24,7 +24,7 @@ end
 
 
 function Lines:updateEndPoint()
-	local mt = getmetatable(Lines.currLine)
+	local mt = getmetatable(self.currLine)
 	-- Is updated every frame so need to check if an updatable line was even created 
 	if mt ~= nil then
 		-- Set the updatable lines end points to the current position of the mouse
@@ -56,6 +56,7 @@ function Lines:drawLines()
 	-- Make sure there is a currLine metatable inside the self.currLine table
 	if currLine_mt ~= nil then
 		local mt = currLine_mt
+		love.graphics.setColor(255,255,255)
 		love.graphics.line(mt.__index.s.x, mt.__index.s.y, mt.__index.e.x, mt.__index.e.y)
 	end
 	if #self.lines ~= 0 then

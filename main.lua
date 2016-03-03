@@ -46,9 +46,11 @@ function love.mousereleased(x, y, button, istouch)
 		if line.e.x == line.s.x and line.e.y == line.s.y then
 			print("Can't create polygon with single point!")
 		else 
-			Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 2)
+			Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 1.2)
 		end
 	elseif button == 2 then
-		Physics:createCircle(world, x, y, 5, 1)
+		Physics:createCircle(world, x, y, 5, 1.5)
+	elseif button == 3 then
+		Physics:createRectangle(world, x,y, 32, 32)
 	end
 end
