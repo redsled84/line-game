@@ -1,20 +1,23 @@
 local inspect = require 'inspect'
 local Physics = {}
 
+
 function Physics:initialize()
 	self.bodies = {}
 end
+
 
 -- Takes start-x, start-y, end-x, end-y
 function Physics:createLinePolygon(world, sx, sy, ex, ey, size)
 	local polygon = {
 		body = love.physics.newBody(world, 0, 0, "static"),
-		shape = love.physics.newPolygonShape({sx, sy, ex, ey, 
-			sx+size, sy+size, ex+size, ey+size})
+		shape = love.physics.newPolygonShape({ sx, sy, ex, ey, 
+			sx + size, sy + size, ex + size, ey + size })
 	}
 	polygon.fixture = love.physics.newFixture(polygon.body, polygon.shape, 1)
 	table.insert(self.bodies, polygon)
 end
+
 
 function Physics:createCircle(world, x, y, radius, bounciness)
 	bounciness = bounciness or 0.9
@@ -24,7 +27,9 @@ function Physics:createCircle(world, x, y, radius, bounciness)
 	}
 	circle.fixture = love.physics.newFixture(circle.body, circle.shape, 1):setRestitution(bounciness)
 	table.insert(self.bodies, circle)
+	return 
 end
+
 
 function Physics:createRectangle(world, x, y, w, h)
 	local rect = {
@@ -36,7 +41,8 @@ function Physics:createRectangle(world, x, y, w, h)
 	table.insert(self.bodies, rect)
 end
 
-function Physics:removeBodies()
+
+function Physics:removeAllBodies()
 	for i=#self.bodies,1,-1 do
 		local v = self.bodies[i]
 		v.body:destroy()
@@ -44,11 +50,28 @@ function Physics:removeBodies()
 	end
 end
 
+
+function Physics:removeBodiesOutOfBounds(x1, x2, y)
+	for i=#self.bodies,1,-1 do
+		local v = self.bodies[i]
+		if v.body:getY() > y or
+		v.body:getX() < x1 or
+		v.body:getX() > x2 and
+		v.shape:getType() == 'circle' then
+			v.body:destroy()
+			table.remove(self.bodies, i)
+		end
+	end
+end
+
+
 function Physics:updateWorld(dt, world)
 	if not world:isDestroyed() then
 		world:update(dt)
 	end
+	Physics:removeBodiesOutOfBounds(0, love.graphics.getWidth(), love.graphics.getHeight())
 end
+
 
 function Physics:drawPhysicBodies(world)
 	if not world:isDestroyed() then

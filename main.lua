@@ -7,37 +7,51 @@
 local inspect = require 'inspect'
 local Lines = require 'lines'
 local Physics = require 'physics'
+local Spawn = require 'spawn'
 
 local meter = 64; love.physics.setMeter(meter)
-local world = love.physics.newWorld(0, 9.18*meter, true)
+local world = love.physics.newWorld(0, 9.18 * meter, true)
 
 function love.load()
 	Lines:initialize()
 	Physics:initialize()
 end
 
+
 function love.update(dt)
 	Lines:updateEndPoint()
 	Physics:updateWorld(dt, world)
 end
 
+
 function love.draw()
 	Lines:drawLines()
 	Physics:drawPhysicBodies(world)
+	Spawn:drawSpawn()
 end
+
 
 function love.keypressed(key)
 	if key == "r" then
 		Lines.lines = {}
-		Physics:removeBodies()
+		Physics:removeAllBodies()
+		Spawn:removeSpawn()
+	end
+	if key == "space" then
+		Spawn:createSpawn(love.math.random(100,400), love.math.random(100,400))
+	end
+	if key == "escape" then
+		love.event.quit()
 	end
 end
+
 
 function love.mousepressed(x, y, button, istouch)
 	if button == 1 then
 		Lines:createNewLine(x, y)
 	end
 end
+
 
 function love.mousereleased(x, y, button, istouch)
 	if button == 1 then
@@ -49,8 +63,8 @@ function love.mousereleased(x, y, button, istouch)
 			Physics:createLinePolygon(world, line.s.x, line.s.y, line.e.x, line.e.y, 1.2)
 		end
 	elseif button == 2 then
-		Physics:createCircle(world, x, y, 5, 1.5)
+		Physics:createCircle(world, Spawn.x, Spawn.y, 5, 1)
 	elseif button == 3 then
-		Physics:createRectangle(world, x,y, 32, 32)
+		Physics:createRectangle(world, x, y, 32, 32)
 	end
 end
