@@ -25,6 +25,12 @@ end
 
 
 function love.draw()
+	love.graphics.setColor(255,255,255)
+	love.graphics.print("Controls: ", 10, 12)
+	love.graphics.print("Right click to create balls at spawn point", 20, 20)
+	love.graphics.print("Left click to create lines", 20, 28)
+	love.graphics.print("Middle click to create rectangles", 20, 36)
+
 	Lines:drawLines()
 	Physics:drawPhysicBodies(world)
 	Spawn:drawSpawn()
