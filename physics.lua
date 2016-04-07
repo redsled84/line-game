@@ -37,10 +37,9 @@ function Physics:createRectangle(world, x, y, w, h)
 		shape = love.physics.newRectangleShape(x, y, w, h),
 		type = "rectangle"
 	}
-	rect.fixture = love.physics.newFixture(rect.body, rect.shape, w, h, 1.25):setRestitution(.5)
+	rect.fixture = love.physics.newFixture(rect.body, rect.shape, 1.25):setRestitution(.5)
 	table.insert(self.bodies, rect)
 end
-
 
 function Physics:removeAllBodies()
 	for i=#self.bodies,1,-1 do
